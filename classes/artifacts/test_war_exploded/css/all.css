@@ -1,0 +1,83 @@
+
+img.image{	 
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+	height: 35%;
+}
+img.image2{	 
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+width: 60%;
+}
+div.voptext{	
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+    width:80%;
+    '-moz-user-select': '-moz-none',
+  '-o-user-select': 'none',
+  '-khtml-user-select': 'none',
+  '-webkit-user-select': 'none',
+  'user-select': 'none'
+}
+div.result{	
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+    width:80%;
+    '-moz-user-select': '-moz-none',
+  '-o-user-select': 'none',
+  '-khtml-user-select': 'none',
+  '-webkit-user-select': 'none',
+  'user-select': 'none'
+}
+div.btn{	
+	margin-left: auto;
+    margin-right: auto;
+    width:40%;
+    
+}
+div.variant{	
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+    width:80%;
+    '-moz-user-select': '-moz-none',
+  '-o-user-select': 'none',
+  '-khtml-user-select': 'none',
+  '-webkit-user-select': 'none',
+  'user-select': 'none'
+}
+div.confirm{	
+	display: block;
+	margin-left: auto;
+    margin-right: auto;
+    width:80%;
+}
+p {
+    margin: 0;
+    padding: 0;
+    clear: both;
+}
+
+p:hover {
+    background-color: #efefef;
+    transition: .3s;
+}
+p:ACTIVE{
+	background-color: #efefee;
+}
+label {
+    display: block;
+    padding: 0.5em 0.5em 0.5em 2em;
+}
+
+input {
+    float: left;
+    position: relative;
+    top: 0.5em;
+    left: 0.5em;
+
+}
