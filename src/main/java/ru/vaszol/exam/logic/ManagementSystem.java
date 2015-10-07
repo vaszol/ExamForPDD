@@ -16,7 +16,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 public class ManagementSystem {
-	private static Connection con;
+	private static Connection connection;
     private static ManagementSystem instance;
     private static DataSource dataSource;
  
@@ -27,9 +27,9 @@ public class ManagementSystem {
         if (instance == null) {
             try {
                 instance = new ManagementSystem();
-                Context ctx = new InitialContext();
-                instance.dataSource = (DataSource) ctx.lookup("java:comp/env/jdbc/StudentsDS");
-                con = dataSource.getConnection();
+                Context context = new InitialContext();
+                instance.dataSource = (DataSource) context.lookup("java:comp/env/jdbc/StudentsDS");
+                connection = dataSource.getConnection();
             } catch (NamingException e) {
                 e.printStackTrace();
             } catch (SQLException e) {
@@ -42,7 +42,7 @@ public class ManagementSystem {
     /**получаем сущность группы**/
     public List getGroups() throws SQLException {
         List groups = new ArrayList();
-        Statement stmt = con.createStatement();
+        Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT group_id, groupName, curator, speciality FROM groups");
         while (rs.next()) {
             Group gr = new Group();
@@ -60,7 +60,7 @@ public class ManagementSystem {
     /**получаем сущногсть студенты**/
     public Collection getAllStudents() throws SQLException {
         Collection students = new ArrayList();
-        Statement stmt = con.createStatement();
+        Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT student_id, firstName, patronymic, surName, "
                 + "sex, dateOfBirth, group_id, educationYear FROM voproses ORDER BY surName, firstName, patronymic");
         while (rs.next()) {
@@ -75,7 +75,7 @@ public class ManagementSystem {
     /**получаем студентов из нужной группы**/
     public Collection getStudentsFromGroup(Group group, int year) throws SQLException {
         Collection students = new ArrayList();
-        PreparedStatement stmt = con.prepareStatement("SELECT student_id, firstName, patronymic, surName, "
+        PreparedStatement stmt = connection.prepareStatement("SELECT student_id, firstName, patronymic, surName, "
                 + "sex, dateOfBirth, group_id, educationYear FROM students "
                 + "WHERE group_id =  ? AND  educationYear =  ? "
                 + "ORDER BY surName, firstName, patronymic");
@@ -94,7 +94,7 @@ public class ManagementSystem {
     /**получаем нужного студента**/
     public Student getStudentById(int studentId) throws SQLException {
         Student student = null;
-        PreparedStatement stmt = con.prepareStatement("SELECT student_id, firstName, patronymic, surName,"
+        PreparedStatement stmt = connection.prepareStatement("SELECT student_id, firstName, patronymic, surName,"
                 + "sex, dateOfBirth, group_id, educationYear FROM students WHERE student_id = ?");
         stmt.setInt(1, studentId);
         ResultSet rs = stmt.executeQuery();
@@ -108,7 +108,7 @@ public class ManagementSystem {
     
     /** перемещаем студентов из одной группы в другую группу**/
     public void moveStudentsToGroup(Group oldGroup, int oldYear, Group newGroup, int newYear) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("UPDATE students SET group_id =  ?, educationYear=? "
+        PreparedStatement stmt = connection.prepareStatement("UPDATE students SET group_id =  ?, educationYear=? "
                 + "WHERE group_id =  ? AND  educationYear = ?");
         stmt.setInt(1, newGroup.getGroupId());
         stmt.setInt(2, newYear);
@@ -118,14 +118,14 @@ public class ManagementSystem {
     }
     /** удаляем студентов группы **/
     public void removeStudentsFromGroup(Group group, int year) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("DELETE FROM students WHERE group_id = ? AND educationYear = ?");
+        PreparedStatement stmt = connection.prepareStatement("DELETE FROM students WHERE group_id = ? AND educationYear = ?");
         stmt.setInt(1, group.getGroupId());
         stmt.setInt(2, year);
         stmt.execute();
     }
     /** добавить студента **/
     public void insertStudent(Student student) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("INSERT INTO students "
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO students "
                 + "(firstName, patronymic, surName, sex, dateOfBirth, group_id, educationYear)"
                 + "VALUES( ?,  ?,  ?,  ?,  ?,  ?,  ?)");
         stmt.setString(1, student.getFirstName());
@@ -140,7 +140,7 @@ public class ManagementSystem {
     
     /** обновить студента по индексу **/
     public void updateStudent(Student student) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("UPDATE students "
+        PreparedStatement stmt = connection.prepareStatement("UPDATE students "
                 + "SET firstName=?, patronymic=?, surName=?, sex=?, dateOfBirth=?, group_id=?,"
                 + "educationYear=? WHERE student_id=?");
         stmt.setString(1, student.getFirstName());
@@ -155,7 +155,7 @@ public class ManagementSystem {
     }
     /** удалить студента по индексу **/
     public void deleteStudent(Student student) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("DELETE FROM students WHERE student_id =  ?");
+        PreparedStatement stmt = connection.prepareStatement("DELETE FROM students WHERE student_id =  ?");
         stmt.setInt(1, student.getStudentId());
         stmt.execute();
     }
@@ -163,7 +163,7 @@ public class ManagementSystem {
     /**получаем сущность билетов**/
     public List getBilets() throws SQLException {
         List bilets = new ArrayList();
-        Statement stmt = con.createStatement();
+        Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT bilet_id, biletName FROM bilets ORDER BY bilet_id");
         while (rs.next()) {
             Bilet bl = new Bilet();
@@ -181,7 +181,7 @@ public class ManagementSystem {
     /**получаем вопросы из базы**/
     public Collection getAllVopotv() throws SQLException {
         Collection vopotv = new ArrayList();
-        Statement stmt = con.createStatement();
+        Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT vopros_id, bilet_id, voprosText, picture, theme,"
         		+ " otvetText1, otvetText2, otvetText3, otvetText4, otvetText5, otvetText6, vopname"
                 + " FROM vopotv ORDER BY vopros_id, vopname");        
@@ -197,7 +197,7 @@ public class ManagementSystem {
     /**получаем вопросы из нужного билета**/
     public Collection getVopotvFromBilet(Bilet bilet) throws SQLException {
         Collection vopotv = new ArrayList();
-        PreparedStatement stmt = con.prepareStatement("SELECT vopros_id, bilet_id, voprosText, picture, theme,"
+        PreparedStatement stmt = connection.prepareStatement("SELECT vopros_id, bilet_id, voprosText, picture, theme,"
         		+ " otvetText1, otvetText2, otvetText3, otvetText4, otvetText5, otvetText6, vopname"
                 + " FROM vopotv "        		
                 + " WHERE bilet_id =  ? "
@@ -216,7 +216,7 @@ public class ManagementSystem {
     /**получаем нужный вопрос**/
     public Vopotv getVopotvById(int voprosId) throws SQLException {
     	Vopotv vopotv = null;
-        PreparedStatement stmt = con.prepareStatement("SELECT vopros_id, bilet_id, voprosText, picture, theme,"
+        PreparedStatement stmt = connection.prepareStatement("SELECT vopros_id, bilet_id, voprosText, picture, theme,"
         		+ " otvetText1, otvetText2, otvetText3, otvetText4, otvetText5, otvetText6, vopname"
                 + " FROM vopotv WHERE vopros_id =  ? "
                 + " ORDER BY vopros_id, vopname");
@@ -232,7 +232,7 @@ public class ManagementSystem {
 
     /** обновить вопрос по индексу **/
 	public void updateVopotv(Vopotv vopotv) throws SQLException{
-		PreparedStatement stmt = con.prepareStatement("UPDATE vopotv "
+		PreparedStatement stmt = connection.prepareStatement("UPDATE vopotv "
                 +" SET vopros_id=?, bilet_id=?, voprosText=?, picture=?, theme=?,"
                 +" otvetText1=?, otvetText2=?, otvetText3=?, otvetText4=?, otvetText5=?, otvetText6=? ,vopname=?"
                 +" WHERE vopros_id=?");
@@ -254,7 +254,7 @@ public class ManagementSystem {
 
     /** добавить вопрос, если есть запись, то заменить её **/
     public void insertVopotv(Vopotv vopotv) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement(" INSERT INTO vopotv (vopros_id, bilet_id, voprosText, picture, theme,"
+        PreparedStatement stmt = connection.prepareStatement(" INSERT INTO vopotv (vopros_id, bilet_id, voprosText, picture, theme,"
                 		+" otvetText1, otvetText2, otvetText3, otvetText4, otvetText5, otvetText6, vopname)"
                 		+" VALUES( ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?,  ?)"                		                    
                 		+" ON DUPLICATE KEY UPDATE `bilet_id`=' ?', `voprosText`=' ?',"
@@ -295,7 +295,7 @@ public class ManagementSystem {
     
     /** удалить вопрос по индексу **/
     public void deleteVopotv(Vopotv vopotv) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("DELETE FROM vopotv WHERE vopros_id =  ?");
+        PreparedStatement stmt = connection.prepareStatement("DELETE FROM vopotv WHERE vopros_id =  ?");
         stmt.setInt(1, vopotv.getVoprosId());
         stmt.execute();
     }
@@ -304,7 +304,7 @@ public class ManagementSystem {
     /**получаем нужную картинку**/
     public Picture getPictureById(int pictureId) throws SQLException {
     	Picture pic = null;
-        PreparedStatement stmt = con.prepareStatement("SELECT picture_id, namePicture,"
+        PreparedStatement stmt = connection.prepareStatement("SELECT picture_id, namePicture,"
                 + " FROM picture WHERE picture_id = ?");
         stmt.setInt(1, pictureId);
         ResultSet rs = stmt.executeQuery();
@@ -318,7 +318,7 @@ public class ManagementSystem {
     /**получаем имя картинки**/
     public String getPictureStringById(int pictureId) throws SQLException {
     	String pic ="";
-        PreparedStatement stmt = con.prepareStatement("SELECT namePicture"
+        PreparedStatement stmt = connection.prepareStatement("SELECT namePicture"
                 + " FROM picture WHERE picture_id = ?");
         stmt.setInt(1, pictureId);
         ResultSet rs = stmt.executeQuery();
@@ -333,7 +333,7 @@ public class ManagementSystem {
     /** получить ответ **/
     public Otvet getOtvetsById(int otvetsId) throws SQLException {
     	Otvet otvet = null;
-        PreparedStatement stmt = con.prepareStatement("SELECT vopros_id, otvet"        		
+        PreparedStatement stmt = connection.prepareStatement("SELECT vopros_id, otvet"
                 + " FROM otvets WHERE vopros_id =  ? ");
         stmt.setInt(1, otvetsId);
         ResultSet rs = stmt.executeQuery();
@@ -347,7 +347,7 @@ public class ManagementSystem {
     }
     /** добавить ответ **/
     public void insertOtvet(Otvet otvet) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("INSERT INTO otvets "
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO otvets "
                 + "(vopros_id, otvet)"
                 + "VALUES( ?,  ?)");
         stmt.setLong(1, otvet.getVopros_id());
@@ -356,7 +356,7 @@ public class ManagementSystem {
     }
     /** обновить ответ по индексу **/
     public void updateStudent(Otvet otvet) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("UPDATE otvets "
+        PreparedStatement stmt = connection.prepareStatement("UPDATE otvets "
                 + " SET vopros_id=?, otvet=?"
                 + " WHERE student_id=?");
         stmt.setLong(1, otvet.getVopros_id());
@@ -369,7 +369,7 @@ public class ManagementSystem {
     /** получить результат теста по индексу**/
     public TestRequest getTestRequestId(int testRequest_id) throws SQLException {
     	TestRequest testRequest = null;
-        PreparedStatement stmt = con.prepareStatement("SELECT testRequest_id, sessionName,"
+        PreparedStatement stmt = connection.prepareStatement("SELECT testRequest_id, sessionName,"
         		+ "vopros_id, OrderDate,otvet,TrueOtvet"
                 + " FROM testRequest WHERE testRequest_id =  ? ");
         stmt.setInt(1, testRequest_id);
@@ -385,7 +385,7 @@ public class ManagementSystem {
     /** получить результаты теста **/
     public List getCurTestRequestBySession(String SessionName) throws SQLException {
     	List testRequest = new ArrayList();
-        PreparedStatement stmt = con.prepareStatement("SELECT * FROM testRequest "
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM testRequest "
         		+ "where sessionName=? and OrderDate BETWEEN (SELECT MAX(OrderDate) "
         		+ "FROM testRequest where vopros_id=0 and sessionName=?) and now()");
         stmt.setString(1, SessionName);
@@ -404,7 +404,7 @@ public class ManagementSystem {
     
     public List getCurTestRequestBySession2(String SessionName) throws SQLException {
     	List testRequest = new ArrayList();
-        PreparedStatement stmt = con.prepareStatement("SELECT * FROM testRequest "
+        PreparedStatement stmt = connection.prepareStatement("SELECT * FROM testRequest "
         		+ "where sessionName=? and OrderDate BETWEEN (SELECT MAX(OrderDate) "
         		+ "FROM testRequest where vopros_id=0 and sessionName=?) and now()");
         stmt.setString(1, SessionName);
@@ -420,7 +420,7 @@ public class ManagementSystem {
     }
     /** добавить результат теста **/
     public void insertTestRequest(TestRequest testRequest) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("INSERT INTO testRequest "
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO testRequest "
                 + "( sessionName, vopros_id, otvet, TrueOtvet)"
                 + "VALUES( ?,  ?,  ?,  ?)");
         //stmt.setLong(1, testRequest.getTestRequest_id());
@@ -432,7 +432,7 @@ public class ManagementSystem {
     }
     /** обновить результат теста по индексу **/
     public void updateTestRequest(TestRequest testRequest) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("UPDATE testRequest "
+        PreparedStatement stmt = connection.prepareStatement("UPDATE testRequest "
                 + " SET testRequest_id=?, sessionName=?, vopros_id, otvet"
                 + " WHERE testRequest_id=?");
         stmt.setLong(1, testRequest.getTestRequest_id());
@@ -448,7 +448,7 @@ public class ManagementSystem {
     /** получить результат сессий**/
     public List getSessions() throws SQLException {
     	List sessions = new ArrayList();
-        Statement stmt = con.createStatement();
+        Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT id, session_id, session_num, "
         		+ "ip, stat, cat, bilet_id, OrderDate FROM mysession");
         //"SELECT group_id, groupName, curator, speciality FROM groups"
@@ -464,7 +464,7 @@ public class ManagementSystem {
      * @param ipAddr **/
     public MySession getSessionsFromIp(String ipAddr) throws SQLException {
     	MySession ses = null;
-    	PreparedStatement stmt = con.prepareStatement("SELECT id, session_id, session_num, "
+    	PreparedStatement stmt = connection.prepareStatement("SELECT id, session_id, session_num, "
         		+ "ip, stat, cat, bilet_id, OrderDate FROM mysession"
         		+ "where ip=?");
         stmt.setString(1, ipAddr);
@@ -484,7 +484,7 @@ public class ManagementSystem {
     
     /** обновить результат сессий **/
     public void updateSessions(MySession session) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("UPDATE mysession "
+        PreparedStatement stmt = connection.prepareStatement("UPDATE mysession "
         		+ "SET session_id=?,session_num=?,`ip`=?,"
         		+ "stat=?,bilet_id=?"
         		+ " WHERE ip=?");
@@ -501,7 +501,7 @@ public class ManagementSystem {
     //INSERT INTO `sessions`(`session_id`, `session_num`, `ip`, `stat`, `cat`, `bilet_id`, `OrderDate`) VALUES (777,666,555,0,0,1,now())
     
     public void insertMySession(MySession mySession) throws SQLException {
-        PreparedStatement stmt = con.prepareStatement("INSERT INTO `mysession`"
+        PreparedStatement stmt = connection.prepareStatement("INSERT INTO `mysession`"
         		+ "(`session_id`, `session_num`, `ip`, `stat`, `cat`, `bilet_id`, `OrderDate`) "
         		+ "VALUES (?,?,?,?,?,?,now())");
         /**
@@ -539,7 +539,7 @@ public class ManagementSystem {
     
     
 	public void updateSessionsFIO(MySession session) throws SQLException {
-		PreparedStatement stmt = con.prepareStatement("UPDATE `mysession` "
+		PreparedStatement stmt = connection.prepareStatement("UPDATE `mysession` "
 				+ "SET `session_id`=?,`session_num`=?,"
 				+ "`ip`=?,`stat`=?,"
 				+ "`bilet_id`=?,`fio`=? "
@@ -557,7 +557,7 @@ public class ManagementSystem {
 
 	public Collection getSessionsFIO() throws SQLException {
 		List sessions = new ArrayList();
-        Statement stmt = con.createStatement();
+        Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery("SELECT id, session_id, session_num, "
         		+ "ip, stat, cat, bilet_id, OrderDate, fio FROM mysession");
         //"SELECT group_id, groupName, curator, speciality FROM groups"
@@ -571,7 +571,7 @@ public class ManagementSystem {
 	}
 
 	public void insertMySessionFIO(MySession mySession) throws SQLException {
-		PreparedStatement stmt = con.prepareStatement("INSERT INTO `mysession`"
+		PreparedStatement stmt = connection.prepareStatement("INSERT INTO `mysession`"
         		+ "(`session_id`, `session_num`, `ip`, `stat`, `cat`, `bilet_id`, `OrderDate`, `fio`) "
         		+ "VALUES (?,?,?,?,?,?,now(),?)");
         
