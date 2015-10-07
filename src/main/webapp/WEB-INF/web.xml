@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         version="2.5">
-  <display-name>Students personnel2</display-name>
+  <display-name>PDD Testing Webapp</display-name>
   <listener>
     <listener-class>ru.vaszol.exam.web.SessionManager</listener-class>
   </listener>

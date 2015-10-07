@@ -1,7 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="war" name="test:war">
     <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="ExamForPDD-1.0-SNAPSHOT.war">
+    <root id="archive" name="ExamForPDD.war">
       <element id="artifact" artifact-name="test:war exploded" />
     </root>
   </artifact>
