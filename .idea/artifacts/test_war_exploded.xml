@@ -7,6 +7,9 @@
           <element id="module-output" name="test" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.google.gwt:gwt-user:2.7.0" />
+          <element id="library" level="project" name="Maven: javax.validation:validation-api:1.0.0.GA" />
+          <element id="library" level="project" name="Maven: javax.validation:validation-api:sources:1.0.0.GA" />
           <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.5" />
           <element id="library" level="project" name="Maven: junit:junit:4.8.2" />
         </element>
